@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2026-08-24T11:40:13 IST" name="Default suite" finished-at="2026-08-24T11:42:06 IST" duration-ms="112607">
+    <groups>
+    </groups>
+    <test started-at="2026-08-24T11:40:13 IST" name="Default test" finished-at="2026-08-24T11:42:06 IST" duration-ms="112607">
+      <class name="tests.EmployeeLifeCycleTest">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:tests.EmployeeLifeCycleTest@1b7cc17c]" started-at="2026-08-24T11:40:13 IST" name="setUp" finished-at="2026-08-24T11:40:27 IST" duration-ms="14247" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="employeeLifecycle()[pri:0, instance:tests.EmployeeLifeCycleTest@1b7cc17c]" started-at="2026-08-24T11:40:27 IST" name="employeeLifecycle" finished-at="2026-08-24T11:42:05 IST" duration-ms="97698" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- employeeLifecycle -->
+        <test-method is-config="true" signature="tearDown(org.testng.ITestResult)[pri:0, instance:tests.EmployeeLifeCycleTest@1b7cc17c]" started-at="2026-08-24T11:42:05 IST" name="tearDown" finished-at="2026-08-24T11:42:06 IST" duration-ms="558" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[[TestResult name=employeeLifecycle status=SUCCESS method=EmployeeLifeCycleTest.employeeLifecycle()[pri:0, instance:tests.EmployeeLifeCycleTest@1b7cc17c] output={null}]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- tests.EmployeeLifeCycleTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
