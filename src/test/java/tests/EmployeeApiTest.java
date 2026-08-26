@@ -43,7 +43,7 @@ public class EmployeeApiTest extends BaseTest {
         dashboardPage.clickPIM();
 
         // ==========================================
-        // 3. CREATE EMPLOYEE FOR API TEST
+        // 3. CREATE EMPLOYEE
         // ==========================================
 
         EmployeePage employeePage =
@@ -52,7 +52,8 @@ public class EmployeeApiTest extends BaseTest {
         employeePage.clickAddEmployee();
 
         String employeeId =
-                String.valueOf(System.currentTimeMillis()).substring(7);
+                String.valueOf(System.currentTimeMillis())
+                        .substring(7);
 
         String firstName = "ApiRavi";
         String middleName = "C";
@@ -100,8 +101,8 @@ public class EmployeeApiTest extends BaseTest {
         String baseUrl =
                 ConfigReader.getProperty("url").trim();
 
-        // Remove trailing slash if present
         if (baseUrl.endsWith("/")) {
+
             baseUrl =
                     baseUrl.substring(
                             0,
@@ -111,7 +112,8 @@ public class EmployeeApiTest extends BaseTest {
 
         try {
 
-            URI baseUri = URI.create(baseUrl);
+            URI baseUri =
+                    URI.create(baseUrl);
 
             RestAssured.baseURI =
                     baseUri.toString();
@@ -119,8 +121,7 @@ public class EmployeeApiTest extends BaseTest {
         } catch (Exception e) {
 
             Assert.fail(
-                    "Invalid OrangeHRM URL: "
-                            + baseUrl,
+                    "Invalid OrangeHRM URL: " + baseUrl,
                     e
             );
         }
@@ -131,45 +132,100 @@ public class EmployeeApiTest extends BaseTest {
         );
 
         // ==========================================
-        // 6. CALL EMPLOYEE API
+        // 6. CALL EMPLOYEE API WITH RETRY
         // ==========================================
 
-        Response response =
-                RestAssured
-                        .given()
-                        .cookie(
-                                "orangehrm",
-                                orangeHrmCookie
-                        )
-                        .queryParam(
-                                "nameOrId",
-                                firstName
-                        )
-                        .queryParam(
-                                "includeEmployees",
-                                "onlyCurrent"
-                        )
-                        .queryParam(
-                                "limit",
-                                "50"
-                        )
-                        .queryParam(
-                                "offset",
-                                "0"
-                        )
-                        .when()
-                        .get(
-                                "/web/index.php/api/v2/pim/employees"
-                        );
+        Response response = null;
+
+        int maxAttempts = 3;
+
+        for (int attempt = 1;
+             attempt <= maxAttempts;
+             attempt++) {
+
+            System.out.println(
+                    "API search attempt: "
+                            + attempt
+                            + " for Employee ID: "
+                            + employeeId
+            );
+
+            response =
+                    RestAssured
+                            .given()
+                            .cookie(
+                                    "orangehrm",
+                                    orangeHrmCookie
+                            )
+                            .queryParam(
+                                    "nameOrId",
+                                    employeeId
+                            )
+                            .queryParam(
+                                    "includeEmployees",
+                                    "onlyCurrent"
+                            )
+                            .queryParam(
+                                    "limit",
+                                    "50"
+                            )
+                            .queryParam(
+                                    "offset",
+                                    "0"
+                            )
+                            .when()
+                            .get(
+                                    "/web/index.php/api/v2/pim/employees"
+                            );
+
+            System.out.println(
+                    "API Status Code: "
+                            + response.getStatusCode()
+            );
+
+            int totalEmployees =
+                    response.jsonPath()
+                            .getInt("meta.total");
+
+            System.out.println(
+                    "Employees found by API: "
+                            + totalEmployees
+            );
+
+            // Employee found
+            if (response.getStatusCode() == 200
+                    && totalEmployees > 0) {
+
+                break;
+            }
+
+            // Wait before retry
+            if (attempt < maxAttempts) {
+
+                System.out.println(
+                        "Employee not available yet. "
+                                + "Waiting before retry..."
+                );
+
+                try {
+
+                    Thread.sleep(3000);
+
+                } catch (InterruptedException e) {
+
+                    Thread.currentThread().interrupt();
+
+                    Assert.fail(
+                            "Thread interrupted while "
+                                    + "waiting for API retry"
+                    );
+                }
+            }
+        }
 
         // ==========================================
-        // 7. PRINT API RESPONSE
+        // 7. PRINT FINAL API RESPONSE
         // ==========================================
-
-        System.out.println(
-                "API Status Code: "
-                        + response.getStatusCode()
-        );
 
         System.out.println("API Response:");
 
@@ -188,26 +244,22 @@ public class EmployeeApiTest extends BaseTest {
         );
 
         // ==========================================
-        // 9. VERIFY EMPLOYEE EXISTS IN API
+        // 9. VERIFY EMPLOYEE EXISTS
         // ==========================================
 
         int totalEmployees =
                 response.jsonPath()
                         .getInt("meta.total");
 
-        System.out.println(
-                "Employees found by API: "
-                        + totalEmployees
-        );
-
         Assert.assertTrue(
                 totalEmployees > 0,
-                firstName
-                        + " employee was not found through API"
+                "Employee ID "
+                        + employeeId
+                        + " was not found through API"
         );
 
         // ==========================================
-        // 10. VERIFY EMPLOYEE NAME AND ID
+        // 10. VERIFY EMPLOYEE DATA
         // ==========================================
 
         String actualFirstName =
@@ -245,7 +297,7 @@ public class EmployeeApiTest extends BaseTest {
         );
 
         // ==========================================
-        // 11. DELETE EMPLOYEE AFTER API VERIFICATION
+        // 11. DELETE EMPLOYEE
         // ==========================================
 
         dashboardPage.clickPIM();
@@ -255,14 +307,21 @@ public class EmployeeApiTest extends BaseTest {
         EmployeeListpage employeeListPage =
                 new EmployeeListpage(driver);
 
-        employeeListPage.searchEmployeeById(employeeId);
-
-        Assert.assertTrue(
-                employeeListPage.isEmployeeDisplayed(employeeId),
-                "Created employee was not found in Employee List"
+        employeeListPage.searchEmployeeById(
+                employeeId
         );
 
-        employeeListPage.deleteEmployee(employeeId);
+        Assert.assertTrue(
+                employeeListPage.isEmployeeDisplayed(
+                        employeeId
+                ),
+                "Created employee was not found "
+                        + "in Employee List"
+        );
+
+        employeeListPage.deleteEmployee(
+                employeeId
+        );
 
         System.out.println(
                 "Employee deleted successfully: "
@@ -270,7 +329,7 @@ public class EmployeeApiTest extends BaseTest {
         );
 
         // ==========================================
-        // 12. FINAL SUCCESS MESSAGE
+        // FINAL SUCCESS
         // ==========================================
 
         System.out.println(

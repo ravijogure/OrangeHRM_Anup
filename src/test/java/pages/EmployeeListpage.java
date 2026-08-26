@@ -46,7 +46,7 @@ public class EmployeeListpage {
         );
 
         WebDriverWait wait =
-                new WebDriverWait(driver, Duration.ofSeconds(20));
+                new WebDriverWait(driver, Duration.ofSeconds(30));
 
         int maxAttempts = 3;
 
@@ -55,25 +55,20 @@ public class EmployeeListpage {
             try {
 
                 System.out.println(
-                        "Searching employee ID: "
-                                + empId
-                                + " | Attempt: "
-                                + attempt
+                        "Searching employee ID: " + empId
+                        + " | Attempt: " + attempt
                 );
 
-                // Wait for Employee ID field
-                WebElement idField =
-                        wait.until(
-                                ExpectedConditions.elementToBeClickable(
-                                        employeeId
-                                )
-                        );
+                // Wait for Employee ID input
+                WebElement idField = wait.until(
+                        ExpectedConditions.visibilityOfElementLocated(
+                                employeeId
+                        )
+                );
 
-                // Clear previous value
+                // Clear and enter Employee ID
                 idField.click();
                 idField.clear();
-
-                // Enter Employee ID
                 idField.sendKeys(empId);
 
                 // Click Search
@@ -83,22 +78,14 @@ public class EmployeeListpage {
                         )
                 ).click();
 
-                // Wait for loading spinner to disappear
-                try {
+                // Wait for table body
+                wait.until(
+                        ExpectedConditions.visibilityOfElementLocated(
+                                employeeTable
+                        )
+                );
 
-                    wait.until(
-                            ExpectedConditions.invisibilityOfElementLocated(
-                                    By.xpath(
-                                            "//div[contains(@class,'oxd-loading-spinner')]"
-                                    )
-                            )
-                    );
-
-                } catch (Exception ignored) {
-                    // Spinner may not appear
-                }
-
-                // Wait for employee row
+                // Wait for employee result
                 wait.until(
                         ExpectedConditions.visibilityOfElementLocated(
                                 employeeResult
@@ -107,7 +94,7 @@ public class EmployeeListpage {
 
                 System.out.println(
                         "Employee found successfully with ID: "
-                                + empId
+                        + empId
                 );
 
                 return;
@@ -115,42 +102,28 @@ public class EmployeeListpage {
             } catch (Exception e) {
 
                 System.out.println(
-                        "Retrying employee search..."
+                        "Search attempt " + attempt
+                        + " failed for employee ID: "
+                        + empId
                 );
 
                 if (attempt < maxAttempts) {
 
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(3000);
                     } catch (InterruptedException ignored) {
-                    }
-
-                    // Refresh page before retry
-                    driver.navigate().refresh();
-
-                    try {
-
-                        wait.until(
-                                ExpectedConditions.urlContains(
-                                        "viewEmployeeList"
-                                )
-                        );
-
-                    } catch (Exception ignored) {
                     }
                 }
             }
         }
 
         throw new RuntimeException(
-                "Employee "
-                        + empId
-                        + " not found after "
-                        + maxAttempts
-                        + " search attempts"
+                "Employee " + empId
+                + " not found after "
+                + maxAttempts
+                + " search attempts"
         );
     }
-
     // ==========================================
     // Verify Employee ID is displayed
     // ==========================================
