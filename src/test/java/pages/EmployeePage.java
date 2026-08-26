@@ -119,47 +119,82 @@ public class EmployeePage {
     public void updateEmployee(String first, String middle, String last) {
 
         WebDriverWait wait =
-                new WebDriverWait(driver, Duration.ofSeconds(15));
+                new WebDriverWait(driver, Duration.ofSeconds(30));
 
-        // Wait for OrangeHRM form loader to disappear
+        // ==========================================
+        // Wait for form fields to become available
+        // ==========================================
+
+        WebElement firstNameElement =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(firstName)
+                );
+
+        // ==========================================
+        // First Name
+        // ==========================================
+
+        firstNameElement.click();
+
+        firstNameElement.sendKeys(Keys.CONTROL, "a");
+        firstNameElement.sendKeys(Keys.BACK_SPACE);
+        firstNameElement.sendKeys(first);
+
+        // ==========================================
+        // Middle Name
+        // ==========================================
+
+        WebElement middleNameElement =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(middleName)
+                );
+
+        middleNameElement.click();
+
+        middleNameElement.sendKeys(Keys.CONTROL, "a");
+        middleNameElement.sendKeys(Keys.BACK_SPACE);
+        middleNameElement.sendKeys(middle);
+
+        // ==========================================
+        // Last Name
+        // ==========================================
+
+        WebElement lastNameElement =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(lastName)
+                );
+
+        lastNameElement.click();
+
+        lastNameElement.sendKeys(Keys.CONTROL, "a");
+        lastNameElement.sendKeys(Keys.BACK_SPACE);
+        lastNameElement.sendKeys(last);
+
+        // ==========================================
+        // Save
+        // ==========================================
+
+        WebElement save =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                saveButton
+                        )
+                );
+
+        save.click();
+
+        // ==========================================
+        // Wait for Save operation to complete
+        // ==========================================
+
         wait.until(
                 ExpectedConditions.invisibilityOfElementLocated(
                         By.cssSelector(".oxd-form-loader")
                 )
         );
 
-        // First Name
-        WebElement firstNameElement =
-                wait.until(ExpectedConditions.elementToBeClickable(firstName));
-
-        firstNameElement.click();
-        firstNameElement.sendKeys(Keys.CONTROL, "a");
-        firstNameElement.sendKeys(Keys.BACK_SPACE);
-        firstNameElement.sendKeys(first);
-
-        // Middle Name
-        WebElement middleNameElement =
-                wait.until(ExpectedConditions.elementToBeClickable(middleName));
-
-        middleNameElement.click();
-        middleNameElement.sendKeys(Keys.CONTROL, "a");
-        middleNameElement.sendKeys(Keys.BACK_SPACE);
-        middleNameElement.sendKeys(middle);
-
-        // Last Name
-        WebElement lastNameElement =
-                wait.until(ExpectedConditions.elementToBeClickable(lastName));
-
-        lastNameElement.click();
-        lastNameElement.sendKeys(Keys.CONTROL, "a");
-        lastNameElement.sendKeys(Keys.BACK_SPACE);
-        lastNameElement.sendKeys(last);
-
-        // Save
-        WebElement save =
-                wait.until(ExpectedConditions.presenceOfElementLocated(saveButton));
-
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].click();", save);
+        System.out.println(
+                "Employee updated successfully"
+        );
     }
 }

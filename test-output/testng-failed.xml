@@ -3,13 +3,13 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="tests.EmployeeApiTest">
+      <class name="tests.EmployeeLifeCycleTest">
         <methods>
           <include name="setUp"/>
           <include name="tearDown"/>
-          <include name="verifyEmployeeThroughAPI"/>
+          <include name="employeeLifecycle"/>
         </methods>
-      </class> <!-- tests.EmployeeApiTest -->
+      </class> <!-- tests.EmployeeLifeCycleTest -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

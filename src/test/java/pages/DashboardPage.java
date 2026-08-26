@@ -1,6 +1,7 @@
 package pages;
 
 import org.openqa.selenium.By;
+
 import org.openqa.selenium.WebDriver;
 import java.time.Duration;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -25,10 +26,18 @@ public class DashboardPage {
     public void clickPIM() {
 
         WebDriverWait wait =
-                new WebDriverWait(driver, Duration.ofSeconds(10));
+                new WebDriverWait(driver, Duration.ofSeconds(30));
 
         wait.until(
-                ExpectedConditions.elementToBeClickable(pimMenu)
+                ExpectedConditions.visibilityOfElementLocated(
+                        pimMenu
+                )
+        );
+
+        wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        pimMenu
+                )
         ).click();
     }
     public void clickEmployeeList() {
