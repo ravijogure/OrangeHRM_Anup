@@ -12,7 +12,10 @@ public class EmployeeListpage {
 
     WebDriver driver;
 
+    // ==========================================
     // Locators
+    // ==========================================
+
     private By employeeId =
             By.xpath("//label[normalize-space()='Employee Id']/following::input[1]");
 
@@ -22,28 +25,28 @@ public class EmployeeListpage {
     private By employeeTable =
             By.xpath("//div[contains(@class,'oxd-table-body')]");
 
-    private By loadingSpinner =
-            By.xpath("//div[contains(@class,'oxd-loading-spinner')]");
-
+    // ==========================================
     // Constructor
+    // ==========================================
+
     public EmployeeListpage(WebDriver driver) {
         this.driver = driver;
     }
 
     // ==========================================
-    // SEARCH EMPLOYEE BY ID
+    // Search Employee by ID
     // ==========================================
 
     public void searchEmployeeById(String empId) {
 
         By employeeResult = By.xpath(
-                "//div[contains(@class,'oxd-table-body')]"
-                + "//div[contains(@class,'oxd-table-cell')]"
-                + "[normalize-space()='" + empId + "']"
+                "//div[contains(@class,'oxd-table-row')]"
+                + "[.//div[contains(@class,'oxd-table-cell') "
+                + "and normalize-space()='" + empId + "']]"
         );
 
         WebDriverWait wait =
-                new WebDriverWait(driver, Duration.ofSeconds(15));
+                new WebDriverWait(driver, Duration.ofSeconds(20));
 
         int maxAttempts = 3;
 
@@ -51,81 +54,91 @@ public class EmployeeListpage {
 
             try {
 
-                // Wait for Employee ID field
-                WebElement idField = wait.until(
-                        ExpectedConditions.elementToBeClickable(employeeId)
+                System.out.println(
+                        "Searching employee ID: "
+                                + empId
+                                + " | Attempt: "
+                                + attempt
                 );
 
+                // Wait for Employee ID field
+                WebElement idField =
+                        wait.until(
+                                ExpectedConditions.elementToBeClickable(
+                                        employeeId
+                                )
+                        );
+
+                // Clear previous value
+                idField.click();
                 idField.clear();
+
+                // Enter Employee ID
                 idField.sendKeys(empId);
 
                 // Click Search
-                WebElement search =
-                        wait.until(
-                                ExpectedConditions.elementToBeClickable(searchButton)
-                        );
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                searchButton
+                        )
+                ).click();
 
-                search.click();
-
-                // Wait for spinner to disappear
+                // Wait for loading spinner to disappear
                 try {
+
                     wait.until(
                             ExpectedConditions.invisibilityOfElementLocated(
-                                    loadingSpinner
+                                    By.xpath(
+                                            "//div[contains(@class,'oxd-loading-spinner')]"
+                                    )
                             )
                     );
+
                 } catch (Exception ignored) {
+                    // Spinner may not appear
                 }
 
-                // Wait for table
+                // Wait for employee row
                 wait.until(
                         ExpectedConditions.visibilityOfElementLocated(
-                                employeeTable
+                                employeeResult
                         )
                 );
 
-                // Give UI a chance to update the result
-                Thread.sleep(1000);
+                System.out.println(
+                        "Employee found successfully with ID: "
+                                + empId
+                );
 
-                // Check employee
-                if (!driver.findElements(employeeResult).isEmpty()) {
-
-                    WebElement employee =
-                            driver.findElement(employeeResult);
-
-                    if (employee.isDisplayed()) {
-
-                        System.out.println(
-                                "Employee found successfully with ID: "
-                                        + empId
-                        );
-
-                        return;
-                    }
-                }
+                return;
 
             } catch (Exception e) {
 
                 System.out.println(
-                        "Search attempt "
-                                + attempt
-                                + " failed for ID: "
-                                + empId
-                );
-            }
-
-            // Retry delay
-            if (attempt < maxAttempts) {
-
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-
-                System.out.println(
                         "Retrying employee search..."
                 );
+
+                if (attempt < maxAttempts) {
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ignored) {
+                    }
+
+                    // Refresh page before retry
+                    driver.navigate().refresh();
+
+                    try {
+
+                        wait.until(
+                                ExpectedConditions.urlContains(
+                                        "viewEmployeeList"
+                                )
+                        );
+
+                    } catch (Exception ignored) {
+                    }
+                }
             }
         }
 
@@ -139,7 +152,7 @@ public class EmployeeListpage {
     }
 
     // ==========================================
-    // VERIFY EMPLOYEE ID
+    // Verify Employee ID is displayed
     // ==========================================
 
     public boolean isEmployeeDisplayed(String empId) {
@@ -153,7 +166,7 @@ public class EmployeeListpage {
         try {
 
             WebDriverWait wait =
-                    new WebDriverWait(driver, Duration.ofSeconds(15));
+                    new WebDriverWait(driver, Duration.ofSeconds(10));
 
             return wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
@@ -168,7 +181,7 @@ public class EmployeeListpage {
     }
 
     // ==========================================
-    // OPEN EMPLOYEE
+    // Open Employee
     // ==========================================
 
     public void openEmployee(String empId) {
@@ -180,20 +193,17 @@ public class EmployeeListpage {
         );
 
         WebDriverWait wait =
-                new WebDriverWait(driver, Duration.ofSeconds(15));
+                new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        WebElement employee =
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                employeeResult
-                        )
-                );
-
-        employee.click();
+        wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        employeeResult
+                )
+        ).click();
     }
 
     // ==========================================
-    // VERIFY EMPLOYEE NAME
+    // Verify Employee Name is displayed
     // ==========================================
 
     public boolean isEmployeeNameDisplayed(String firstName) {
@@ -201,15 +211,13 @@ public class EmployeeListpage {
         By employeeResult = By.xpath(
                 "//div[contains(@class,'oxd-table-body')]"
                 + "//div[contains(@class,'oxd-table-cell')]"
-                + "[contains(normalize-space(),'"
-                + firstName
-                + "')]"
+                + "[contains(normalize-space(),'" + firstName + "')]"
         );
 
         try {
 
             WebDriverWait wait =
-                    new WebDriverWait(driver, Duration.ofSeconds(15));
+                    new WebDriverWait(driver, Duration.ofSeconds(10));
 
             return wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
@@ -224,7 +232,7 @@ public class EmployeeListpage {
     }
 
     // ==========================================
-    // DELETE EMPLOYEE
+    // Delete Employee
     // ==========================================
 
     public void deleteEmployee(String empId) {
@@ -232,15 +240,12 @@ public class EmployeeListpage {
         By deleteButton = By.xpath(
                 "//div[contains(@class,'oxd-table-row')]"
                 + "[.//div[contains(@class,'oxd-table-cell') "
-                + "and normalize-space()='"
-                + empId
-                + "']]"
-                + "//button[contains(@class,"
-                + "'oxd-table-cell-action-space')][2]"
+                + "and normalize-space()='" + empId + "']]"
+                + "//button[contains(@class,'oxd-table-cell-action-space')][2]"
         );
 
         WebDriverWait wait =
-                new WebDriverWait(driver, Duration.ofSeconds(15));
+                new WebDriverWait(driver, Duration.ofSeconds(10));
 
         // Click Delete icon
         wait.until(
@@ -249,7 +254,7 @@ public class EmployeeListpage {
                 )
         ).click();
 
-        // Confirmation popup
+        // Confirmation Delete button
         By confirmDeleteButton = By.xpath(
                 "//button[contains(normalize-space(),'Delete')]"
         );
@@ -259,17 +264,5 @@ public class EmployeeListpage {
                         confirmDeleteButton
                 )
         ).click();
-
-        // Wait until delete popup disappears
-        try {
-
-            wait.until(
-                    ExpectedConditions.invisibilityOfElementLocated(
-                            confirmDeleteButton
-                    )
-            );
-
-        } catch (Exception ignored) {
-        }
     }
 }

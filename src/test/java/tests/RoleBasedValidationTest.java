@@ -1,5 +1,10 @@
 package tests;
 
+import java.time.Duration;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -26,32 +31,61 @@ public class RoleBasedValidationTest extends BaseTest {
         );
 
         // ==========================================
-        // 2. VERIFY ADMIN ROLE ACCESS
+        // 2. WAIT FOR DASHBOARD
         // ==========================================
+
+        WebDriverWait wait =
+                new WebDriverWait(driver, Duration.ofSeconds(30));
+
+        boolean dashboardLoaded = wait.until(
+                ExpectedConditions.urlContains("/dashboard")
+        );
 
         String currentUrl = driver.getCurrentUrl();
 
-        System.out.println("Current URL after login: " + currentUrl);
+        System.out.println(
+                "Current URL after login: " + currentUrl
+        );
 
         Assert.assertTrue(
-                currentUrl.contains("/dashboard"),
-                "User was not redirected to Dashboard after login"
+                dashboardLoaded,
+                "User was not redirected to Dashboard after login. Current URL: "
+                        + currentUrl
         );
 
         // ==========================================
         // 3. VERIFY ADMIN MENU ACCESS
         // ==========================================
 
-        boolean adminMenuDisplayed = driver.findElements(
-                org.openqa.selenium.By.xpath(
-                        "//span[normalize-space()='Admin']"
-                )
-        ).size() > 0;
+        By adminMenu =
+                By.xpath("//span[normalize-space()='Admin']");
+
+        boolean adminMenuDisplayed = false;
+
+        try {
+
+            adminMenuDisplayed = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                            adminMenu
+                    )
+            ).isDisplayed();
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Admin menu was not displayed: "
+                            + e.getMessage()
+            );
+        }
 
         Assert.assertTrue(
                 adminMenuDisplayed,
                 "Admin menu is not displayed for the logged-in user"
         );
+
+        // ==========================================
+        // 4. SUCCESS MESSAGE
+        // ==========================================
 
         System.out.println(
                 "Admin role validation successful"

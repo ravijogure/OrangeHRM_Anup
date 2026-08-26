@@ -1,5 +1,7 @@
 package tests;
 
+import java.net.URI;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -92,17 +94,53 @@ public class EmployeeApiTest extends BaseTest {
         );
 
         // ==========================================
-        // 5. CALL EMPLOYEE API
+        // 5. SET API BASE URI
         // ==========================================
 
-        String apiUrl =
-                ConfigReader.getProperty("url")
-                        + "web/index.php/api/v2/pim/employees";
+        String baseUrl =
+                ConfigReader.getProperty("url").trim();
+
+        // Remove trailing slash if present
+        if (baseUrl.endsWith("/")) {
+            baseUrl =
+                    baseUrl.substring(
+                            0,
+                            baseUrl.length() - 1
+                    );
+        }
+
+        try {
+
+            URI baseUri = URI.create(baseUrl);
+
+            RestAssured.baseURI =
+                    baseUri.toString();
+
+        } catch (Exception e) {
+
+            Assert.fail(
+                    "Invalid OrangeHRM URL: "
+                            + baseUrl,
+                    e
+            );
+        }
+
+        System.out.println(
+                "API Base URI: "
+                        + RestAssured.baseURI
+        );
+
+        // ==========================================
+        // 6. CALL EMPLOYEE API
+        // ==========================================
 
         Response response =
                 RestAssured
                         .given()
-                        .cookie("orangehrm", orangeHrmCookie)
+                        .cookie(
+                                "orangehrm",
+                                orangeHrmCookie
+                        )
                         .queryParam(
                                 "nameOrId",
                                 firstName
@@ -120,10 +158,12 @@ public class EmployeeApiTest extends BaseTest {
                                 "0"
                         )
                         .when()
-                        .get(apiUrl);
+                        .get(
+                                "/web/index.php/api/v2/pim/employees"
+                        );
 
         // ==========================================
-        // 6. PRINT API RESPONSE
+        // 7. PRINT API RESPONSE
         // ==========================================
 
         System.out.println(
@@ -138,7 +178,7 @@ public class EmployeeApiTest extends BaseTest {
         );
 
         // ==========================================
-        // 7. VERIFY STATUS CODE
+        // 8. VERIFY STATUS CODE
         // ==========================================
 
         Assert.assertEquals(
@@ -148,7 +188,7 @@ public class EmployeeApiTest extends BaseTest {
         );
 
         // ==========================================
-        // 8. VERIFY EMPLOYEE EXISTS IN API
+        // 9. VERIFY EMPLOYEE EXISTS IN API
         // ==========================================
 
         int totalEmployees =
@@ -162,11 +202,12 @@ public class EmployeeApiTest extends BaseTest {
 
         Assert.assertTrue(
                 totalEmployees > 0,
-                firstName + " employee was not found through API"
+                firstName
+                        + " employee was not found through API"
         );
 
         // ==========================================
-        // 9. VERIFY EMPLOYEE NAME
+        // 10. VERIFY EMPLOYEE NAME AND ID
         // ==========================================
 
         String actualFirstName =
@@ -204,7 +245,7 @@ public class EmployeeApiTest extends BaseTest {
         );
 
         // ==========================================
-        // 10. DELETE EMPLOYEE AFTER API VERIFICATION
+        // 11. DELETE EMPLOYEE AFTER API VERIFICATION
         // ==========================================
 
         dashboardPage.clickPIM();
@@ -229,7 +270,7 @@ public class EmployeeApiTest extends BaseTest {
         );
 
         // ==========================================
-        // FINAL SUCCESS MESSAGE
+        // 12. FINAL SUCCESS MESSAGE
         // ==========================================
 
         System.out.println(
