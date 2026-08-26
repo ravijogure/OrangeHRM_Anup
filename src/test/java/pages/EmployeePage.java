@@ -66,6 +66,7 @@ public class EmployeePage {
         element.sendKeys(Keys.BACK_SPACE);
         element.sendKeys(value);
     }
+
     public void clickAddEmployee() {
         driver.findElement(addEmployeeButton).click();
     }
@@ -92,6 +93,7 @@ public class EmployeePage {
 
         save.click();
     }
+
     public String getEmployeeId() {
         return driver.findElement(employeeIdField).getAttribute("value");
     }
@@ -107,7 +109,7 @@ public class EmployeePage {
 
         clickSave();
 
-      
+
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(employeeIdField));
 
@@ -116,10 +118,23 @@ public class EmployeePage {
 
         return actualEmpId;
     }
+
     public void updateEmployee(String first, String middle, String last) {
 
         WebDriverWait wait =
                 new WebDriverWait(driver, Duration.ofSeconds(30));
+
+        // ==========================================
+        // Wait for page loader to disappear first
+        // (prevents ElementClickInterceptedException
+        // right after navigating to employee page)
+        // ==========================================
+
+        wait.until(
+                ExpectedConditions.invisibilityOfElementLocated(
+                        By.cssSelector(".oxd-form-loader")
+                )
+        );
 
         // ==========================================
         // Wait for form fields to become available

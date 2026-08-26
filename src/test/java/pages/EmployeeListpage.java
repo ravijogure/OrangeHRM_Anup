@@ -3,6 +3,7 @@ package pages;
 import java.time.Duration;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -66,9 +67,10 @@ public class EmployeeListpage {
                         )
                 );
 
-                // Clear and enter Employee ID
+                // Clear and enter Employee ID (React-safe clear)
                 idField.click();
-                idField.clear();
+                idField.sendKeys(Keys.CONTROL, "a");
+                idField.sendKeys(Keys.BACK_SPACE);
                 idField.sendKeys(empId);
 
                 // Click Search
@@ -77,6 +79,13 @@ public class EmployeeListpage {
                                 searchButton
                         )
                 ).click();
+
+                // Wait for loader to disappear after search
+                wait.until(
+                        ExpectedConditions.invisibilityOfElementLocated(
+                                By.cssSelector(".oxd-table-loader, .oxd-form-loader")
+                        )
+                );
 
                 // Wait for table body
                 wait.until(
@@ -124,6 +133,7 @@ public class EmployeeListpage {
                 + " search attempts"
         );
     }
+
     // ==========================================
     // Verify Employee ID is displayed
     // ==========================================

@@ -2,20 +2,20 @@
 <testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2026-08-26T15:20:06 IST" name="Default suite" finished-at="2026-08-26T15:21:18 IST" duration-ms="71597">
+  <suite started-at="2026-08-26T15:59:54 IST" name="Default suite" finished-at="2026-08-26T16:01:43 IST" duration-ms="109084">
     <groups>
     </groups>
-    <test started-at="2026-08-26T15:20:06 IST" name="Default test" finished-at="2026-08-26T15:21:18 IST" duration-ms="71597">
+    <test started-at="2026-08-26T15:59:54 IST" name="Default test" finished-at="2026-08-26T16:01:43 IST" duration-ms="109084">
       <class name="tests.EmployeeLifeCycleTest">
-        <test-method is-config="true" signature="setUp()[pri:0, instance:tests.EmployeeLifeCycleTest@4efbca5a]" started-at="2026-08-26T15:20:06 IST" name="setUp" finished-at="2026-08-26T15:20:15 IST" duration-ms="9053" status="PASS">
+        <test-method is-config="true" signature="setUp()[pri:0, instance:tests.EmployeeLifeCycleTest@4efbca5a]" started-at="2026-08-26T15:59:54 IST" name="setUp" finished-at="2026-08-26T16:00:05 IST" duration-ms="11575" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="employeeLifecycle()[pri:0, instance:tests.EmployeeLifeCycleTest@4efbca5a]" started-at="2026-08-26T15:20:15 IST" name="employeeLifecycle" finished-at="2026-08-26T15:21:17 IST" duration-ms="61791" status="PASS">
+        <test-method signature="employeeLifecycle()[pri:0, instance:tests.EmployeeLifeCycleTest@4efbca5a]" started-at="2026-08-26T16:00:05 IST" name="employeeLifecycle" finished-at="2026-08-26T16:01:42 IST" duration-ms="96706" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- employeeLifecycle -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:tests.EmployeeLifeCycleTest@4efbca5a]" started-at="2026-08-26T15:21:17 IST" name="tearDown" finished-at="2026-08-26T15:21:18 IST" duration-ms="561" status="PASS">
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:tests.EmployeeLifeCycleTest@4efbca5a]" started-at="2026-08-26T16:01:42 IST" name="tearDown" finished-at="2026-08-26T16:01:43 IST" duration-ms="684" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
