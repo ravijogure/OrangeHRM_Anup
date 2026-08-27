@@ -445,4 +445,27 @@ The framework has been successfully verified through GitHub Actions.
 
 Ravi Jogure
 
-OrangeHRM Automation Testing Project
+OrangeHRM Automation Testing Project## Flaky Test Detection
+
+Flaky tests are identified by monitoring test results across repeated executions.
+
+A test is considered potentially flaky when it passes and fails intermittently without a consistent application or code defect.
+
+The framework uses:
+
+- Retry logic for transient failures
+- Explicit waits for dynamic application behavior
+- Stable locators
+- CI execution history
+- Failure screenshots for debugging
+
+## Flaky Test Mitigation Strategy
+
+Flaky behavior is mitigated by:
+
+- Replacing unnecessary fixed delays with explicit waits
+- Waiting for application state before performing actions
+- Adding retry logic for transient search failures
+- Waiting for successful employee save confirmation
+- Capturing screenshots when failures occur
+- Running tests repeatedly through GitHub Actions
