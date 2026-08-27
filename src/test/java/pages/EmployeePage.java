@@ -109,16 +109,35 @@ public class EmployeePage {
 
         clickSave();
 
+        WebDriverWait wait =
+                new WebDriverWait(driver, Duration.ofSeconds(30));
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(employeeIdField));
+        // Wait until OrangeHRM confirms employee was saved
+        By successToast =
+                By.xpath("//div[contains(@class,'oxd-toast')]"
+                        + "[contains(.,'Successfully Saved')]");
+
+        wait.until(
+                ExpectedConditions.visibilityOfElementLocated(successToast)
+        );
+
+        System.out.println("Employee saved successfully: " + empId);
+
+        // Wait for save loader to disappear
+        wait.until(
+                ExpectedConditions.invisibilityOfElementLocated(
+                        By.cssSelector(".oxd-form-loader")
+                )
+        );
 
         String actualEmpId = getEmployeeId();
-        System.out.println("Employee ID after Save: " + actualEmpId);
+
+        System.out.println(
+                "Employee ID after Save: " + actualEmpId
+        );
 
         return actualEmpId;
     }
-
     public void updateEmployee(String first, String middle, String last) {
 
         WebDriverWait wait =
