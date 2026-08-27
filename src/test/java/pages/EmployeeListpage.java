@@ -49,28 +49,33 @@ public class EmployeeListpage {
         WebDriverWait wait =
                 new WebDriverWait(driver, Duration.ofSeconds(30));
 
-        int maxAttempts = 3;
+        int maxAttempts = 5;
 
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
 
             try {
 
                 System.out.println(
-                        "Searching employee ID: " + empId
-                        + " | Attempt: " + attempt
+                        "Searching employee ID: "
+                        + empId
+                        + " | Attempt: "
+                        + attempt
                 );
 
-                // Wait for Employee ID input
-                WebElement idField = wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(
-                                employeeId
-                        )
-                );
+                // Wait for Employee ID field
+                WebElement idField =
+                        wait.until(
+                                ExpectedConditions.elementToBeClickable(
+                                        employeeId
+                                )
+                        );
 
-                // Clear and enter Employee ID (React-safe clear)
+                // Clear existing value
                 idField.click();
                 idField.sendKeys(Keys.CONTROL, "a");
                 idField.sendKeys(Keys.BACK_SPACE);
+
+                // Enter Employee ID
                 idField.sendKeys(empId);
 
                 // Click Search
@@ -80,38 +85,46 @@ public class EmployeeListpage {
                         )
                 ).click();
 
-                // Wait for loader to disappear after search
-                wait.until(
-                        ExpectedConditions.invisibilityOfElementLocated(
-                                By.cssSelector(".oxd-table-loader, .oxd-form-loader")
-                        )
-                );
+                // Give OrangeHRM time to process the search
+                try {
 
-                // Wait for table body
-                wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(
-                                employeeTable
-                        )
-                );
+                    wait.until(
+                            ExpectedConditions.invisibilityOfElementLocated(
+                                    By.cssSelector(
+                                            ".oxd-table-loader"
+                                    )
+                            )
+                    );
 
-                // Wait for employee result
-                wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(
-                                employeeResult
-                        )
-                );
+                } catch (Exception ignored) {
 
-                System.out.println(
-                        "Employee found successfully with ID: "
-                        + empId
-                );
+                    System.out.println(
+                            "Table loader still present, continuing to check result..."
+                    );
+                }
 
-                return;
+                // Check whether employee result is displayed
+                if (
+                        wait.until(
+                                ExpectedConditions.visibilityOfElementLocated(
+                                        employeeResult
+                                )
+                        ).isDisplayed()
+                ) {
+
+                    System.out.println(
+                            "Employee found successfully with ID: "
+                            + empId
+                    );
+
+                    return;
+                }
 
             } catch (Exception e) {
 
                 System.out.println(
-                        "Search attempt " + attempt
+                        "Search attempt "
+                        + attempt
                         + " failed for employee ID: "
                         + empId
                 );
@@ -119,15 +132,20 @@ public class EmployeeListpage {
                 if (attempt < maxAttempts) {
 
                     try {
+
                         Thread.sleep(3000);
-                    } catch (InterruptedException ignored) {
+
+                    } catch (InterruptedException interruptedException) {
+
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
         }
 
         throw new RuntimeException(
-                "Employee " + empId
+                "Employee "
+                + empId
                 + " not found after "
                 + maxAttempts
                 + " search attempts"

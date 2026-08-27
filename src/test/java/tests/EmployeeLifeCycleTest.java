@@ -10,10 +10,13 @@ import pages.EmployeeListpage;
 import pages.EmployeePage;
 import pages.LoginPage;
 import utils.ConfigReader;
+import org.testng.annotations.Listeners;
+import listners.ExtentTestListener;
 
+@Listeners(ExtentTestListener.class)
 public class EmployeeLifeCycleTest extends BaseTest {
 
-    @Test
+	@Test(groups = {"smoke", "regression"})
     public void employeeLifecycle() {
 
         // ==========================================

@@ -2,6 +2,7 @@ package tests;
 
 import java.net.URI;
 
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -14,10 +15,13 @@ import utils.ConfigReader;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.testng.annotations.Listeners;
+import listners.ExtentTestListener;
 
+@Listeners(ExtentTestListener.class)
 public class EmployeeApiTest extends BaseTest {
 
-    @Test
+	@Test(groups = {"regression"})
     public void verifyEmployeeThroughAPI() {
 
         System.out.println("===== Employee API Test Started =====");

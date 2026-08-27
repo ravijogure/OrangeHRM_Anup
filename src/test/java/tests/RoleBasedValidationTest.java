@@ -2,6 +2,7 @@ package tests;
 
 import java.time.Duration;
 
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -11,10 +12,14 @@ import org.testng.annotations.Test;
 import base.BaseTest;
 import pages.LoginPage;
 import utils.ConfigReader;
+import org.testng.annotations.Listeners;
+import listners.ExtentTestListener;
+
+@Listeners(ExtentTestListener.class)
 
 public class RoleBasedValidationTest extends BaseTest {
 
-    @Test
+	@Test(groups = {"smoke", "regression"})
     public void verifyAdminRoleAccess() {
 
         System.out.println("===== Role Based Validation Test Started =====");
