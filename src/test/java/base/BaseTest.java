@@ -14,12 +14,14 @@ public class BaseTest {
 
     protected WebDriver driver;
 
-    @BeforeMethod
+    // ==========================================
+    // Setup Browser
+    // ==========================================
+
+    @BeforeMethod(alwaysRun = true)
     public void setUp() {
 
-        // ==========================================
-        // Chrome Options
-        // ==========================================
+        System.out.println("===== BaseTest Setup Started =====");
 
         ChromeOptions options = new ChromeOptions();
 
@@ -32,45 +34,53 @@ public class BaseTest {
             options.addArguments("--window-size=1920,1080");
         }
 
-        // ==========================================
         // Launch Chrome
-        // ==========================================
-
         driver = new ChromeDriver(options);
 
-        // ==========================================
-        // Browser Settings
-        // ==========================================
+        System.out.println("ChromeDriver initialized successfully");
 
-        driver.manage().timeouts()
+        // Browser settings
+        driver.manage()
+                .timeouts()
                 .implicitlyWait(Duration.ofSeconds(10));
 
-        driver.manage().timeouts()
+        driver.manage()
+                .timeouts()
                 .pageLoadTimeout(Duration.ofSeconds(30));
 
-        // Maximize only when running locally
+        // Maximize only locally
         if (System.getenv("CI") == null) {
             driver.manage().window().maximize();
         }
 
-        // ==========================================
-        // Open OrangeHRM
-        // ==========================================
+        // Open application
+        String url = ConfigReader.getProperty("url");
 
-        driver.get(
-                ConfigReader.getProperty("url")
-        );
+        System.out.println("Opening URL: " + url);
+
+        driver.get(url);
+
+        System.out.println("===== BaseTest Setup Completed =====");
     }
 
     // ==========================================
     // Close Browser
     // ==========================================
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown() {
 
+        System.out.println("===== BaseTest TearDown Started =====");
+
         if (driver != null) {
+
             driver.quit();
+
+            driver = null;
+
+            System.out.println("Browser closed successfully");
         }
+
+        System.out.println("===== BaseTest TearDown Completed =====");
     }
 }
